@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Engineering Workshop | Interactive Learning Hub</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+            indigo: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .pulse-subtle {
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              Prompt Craft
+              <span class="text-xs bg-indigo-500/20 text-indigo-300 font-semibold px-2 py-0.5 rounded-full border border-indigo-500/30">FYE 101</span>
+            </h1>
+            <p class="text-xs text-slate-400 hidden sm:block">Community College AI Literacy Workshop</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/50">
+          <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-white bg-indigo-600 shadow">
+            <i class="fa-solid fa-compass mr-1.5"></i> Overview
+          </button>
+          <button onclick="switchTab('rtcc')" id="nav-rtcc" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-700/50">
+            <i class="fa-solid fa-cubes mr-1.5"></i> RTC-C Model
+          </button>
+          <button onclick="switchTab('builder')" id="nav-builder" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-700/50">
+            <i class="fa-solid fa-sliders mr-1.5"></i> Studio
+          </button>
+          <button onclick="switchTab('examples')" id="nav-examples" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-700/50">
+            <i class="fa-solid fa-code-compare mr-1.5"></i> Examples
+          </button>
+          <button onclick="switchTab('challenge')" id="nav-challenge" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-700/50">
+            <i class="fa-solid fa-gamepad mr-1.5"></i> Challenge
+          </button>
+          <button onclick="switchTab('ethics')" id="nav-ethics" class="nav-btn px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-700/50">
+            <i class="fa-solid fa-shield-halved mr-1.5"></i> Literacy & Ethics
+          </button>
+        </nav>
+
+        <!-- Right Action Button -->
+        <div class="flex items-center gap-2">
+          <button onclick="openCitationModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-indigo-300 hover:bg-slate-700 border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-quote-right"></i>
+            <span class="hidden sm:inline">Cite AI</span>
+          </button>
+          <a href="#challenge" onclick="switchTab('challenge')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold hover:brightness-110 transition shadow-md shadow-emerald-500/20">
+            Start Challenge
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Strip -->
+    <div class="md:hidden flex overflow-x-auto px-4 py-2 border-t border-slate-800 gap-2 scrollbar-none text-xs">
+      <button onclick="switchTab('overview')" id="mob-nav-overview" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-indigo-600 text-white font-medium">Overview</button>
+      <button onclick="switchTab('rtcc')" id="mob-nav-rtcc" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">RTC-C Framework</button>
+      <button onclick="switchTab('builder')" id="mob-nav-builder" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">Prompt Studio</button>
+      <button onclick="switchTab('examples')" id="mob-nav-examples" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">Examples</button>
+      <button onclick="switchTab('challenge')" id="mob-nav-challenge" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">Challenge</button>
+      <button onclick="switchTab('ethics')" id="mob-nav-ethics" class="mob-nav-btn whitespace-nowrap px-3 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">Literacy & Ethics</button>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+
+    <!-- TAB 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-content space-y-6">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 border border-indigo-500/20 p-6 sm:p-10 shadow-2xl">
+        <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-1/3 -top-10 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-3xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold">
+            <i class="fa-solid fa-bullhorn"></i> 30-Minute Student Success Workshop
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Mastering Prompt Engineering for College & Beyond
+          </h2>
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            Generative AI tools like <span class="text-indigo-400 font-semibold">Microsoft Copilot</span> and <span class="text-emerald-400 font-semibold">ChatGPT</span> are not just search engines—they are your personal academic interns. Learn how to direct them effectively using the <strong class="text-white">RTC-C Framework</strong>.
+          </p>
+
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="switchTab('rtcc')" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+              Learn RTC-C Framework <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+            <button onclick="switchTab('builder')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold border border-slate-700 transition flex items-center gap-2">
+              Launch Prompt Studio <i class="fa-solid fa-flask text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop Agenda Grid -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-clock text-indigo-400"></i> Workshop Agenda (30 Minutes)
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+            <div class="text-xs font-mono font-semibold text-indigo-400 mb-1">00:00 - 05:00</div>
+            <div class="text-sm font-bold text-white mb-1">1. AI Myth vs. Reality</div>
+            <p class="text-xs text-slate-400">Why prompt quality dictates AI output & why AI acts like an intern.</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+            <div class="text-xs font-mono font-semibold text-indigo-400 mb-1">05:00 - 12:00</div>
+            <div class="text-sm font-bold text-white mb-1">2. RTC-C Framework</div>
+            <p class="text-xs text-slate-400">Role, Task, Context, and Constraints breakdown with visual examples.</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+            <div class="text-xs font-mono font-semibold text-indigo-400 mb-1">12:00 - 18:00</div>
+            <div class="text-sm font-bold text-white mb-1">3. Practical Examples</div>
+            <p class="text-xs text-slate-400">Side-by-side weak vs. engineered prompts for FYE college scenarios.</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+            <div class="text-xs font-mono font-semibold text-indigo-400 mb-1">18:00 - 24:00</div>
+            <div class="text-sm font-bold text-white mb-1">4. Makeover Challenge</div>
+            <p class="text-xs text-slate-400">Interactive student activity transforming weak prompts into high-yield prompts.</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+            <div class="text-xs font-mono font-semibold text-indigo-400 mb-1">24:00 - 30:00</div>
+            <div class="text-sm font-bold text-white mb-1">5. Literacy & Ethics</div>
+            <p class="text-xs text-slate-400">Checking for hallucinations, bias, and proper academic citations.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Measurable Outcomes -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i> Student Learning Objectives
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 font-bold">1</div>
+            <div>
+              <div class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-0.5">Apply Framework</div>
+              <p class="text-xs text-slate-300">Apply the RTC-C framework (Role, Task, Context, Constraints) to transform generic AI queries into structured academic prompts.</p>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex gap-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 font-bold">2</div>
+            <div>
+              <div class="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-0.5">Evaluate Outputs</div>
+              <p class="text-xs text-slate-300">Evaluate Copilot and ChatGPT responses for accuracy, hidden bias, and potential hallucinations using systematic verification.</p>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex gap-3">
+            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 font-bold">3</div>
+            <div>
+              <div class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-0.5">Academic Integrity</div>
+              <p class="text-xs text-slate-300">Demonstrate ethical AI usage by articulating transparent usage disclosure and generating accurate MLA/APA citations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: RTC-C FRAMEWORK BREAKDOWN -->
+    <section id="tab-rtcc" class="tab-content hidden space-y-6">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">The RTC-C Prompting Blueprint</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Generative AI draws from vast datasets. Giving it clear boundaries acts like sending a job description to a highly capable intern.</p>
+      </div>
+
+      <!-- 4 Pillars Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- R: Role -->
+        <div class="glass-card p-5 rounded-2xl border-t-4 border-t-indigo-500 border-x border-b border-slate-800 flex flex-col justify-between hover:scale-[1.02] transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 font-extrabold text-lg flex items-center justify-center">R</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">Persona</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Role</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Who should the AI act as? Defining an expert identity directs vocabulary, depth, and tone.
+            </p>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono text-indigo-300">
+              "Act as an encouraging peer writing tutor..."
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <strong class="text-slate-200">Why it works:</strong> Limits AI's search space to specialized domain expertise.
+          </div>
+        </div>
+
+        <!-- T: Task -->
+        <div class="glass-card p-5 rounded-2xl border-t-4 border-t-emerald-500 border-x border-b border-slate-800 flex flex-col justify-between hover:scale-[1.02] transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 font-extrabold text-lg flex items-center justify-center">T</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">Action</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Task</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              What explicit action must the AI perform? Use strong, specific action verbs instead of generic queries.
+            </p>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono text-emerald-300">
+              "Brainstorm 3 thesis options & critique main arguments..."
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <strong class="text-slate-200">Why it works:</strong> Direct action verbs eliminate fluff and unfocused output.
+          </div>
+        </div>
+
+        <!-- C: Context -->
+        <div class="glass-card p-5 rounded-2xl border-t-4 border-t-amber-500 border-x border-b border-slate-800 flex flex-col justify-between hover:scale-[1.02] transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-lg flex items-center justify-center">C</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">Background</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Context</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              What background details apply? Include your course name, skill level, or personal constraints.
+            </p>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono text-amber-300">
+              "I am an FYE student working 25 hrs/week in retail..."
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <strong class="text-slate-200">Why it works:</strong> Personalizes answers to your exact scenario instead of generic advice.
+          </div>
+        </div>
+
+        <!-- C: Constraints -->
+        <div class="glass-card p-5 rounded-2xl border-t-4 border-t-purple-500 border-x border-b border-slate-800 flex flex-col justify-between hover:scale-[1.02] transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 font-extrabold text-lg flex items-center justify-center">C</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">Guardrails</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Constraints</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              What boundaries, rules, or formatting apply? Define what to do AND what NOT to do.
+            </p>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono text-purple-300">
+              "Do not write the essay. Limit to a bulleted table under 150 words."
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <strong class="text-slate-200">Why it works:</strong> Protects academic integrity and guarantees concise formatting.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Concept Test Accordion -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-lightbulb text-amber-400"></i> Why does RTC-C dramatically improve AI answers?
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Large Language Models (LLMs) operate on probabilistic matching. When you input a single vague word like <em>"essay help"</em>, the model calculates standard responses based on millions of general internet posts. By layering <strong>Role, Task, Context, and Constraints</strong>, you narrow the statistical target space directly to your specific course requirements and personal learning goals.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: PROMPT STUDIO / BUILDER -->
+    <section id="tab-builder" class="tab-content hidden space-y-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white">Interactive Prompt Studio</h2>
+          <p class="text-xs text-slate-400">Build your RTC-C prompt dynamically or choose a pre-loaded student template.</p>
+        </div>
+        
+        <!-- Template Selectors -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Load Template:</span>
+          <button onclick="loadTemplate('writing')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 text-xs font-medium hover:bg-slate-700 border border-slate-700 transition">
+            <i class="fa-solid fa-pen-nib mr-1 text-indigo-400"></i> Essay Thesis
+          </button>
+          <button onclick="loadTemplate('schedule')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 text-xs font-medium hover:bg-slate-700 border border-slate-700 transition">
+            <i class="fa-solid fa-calendar-days mr-1 text-emerald-400"></i> Study Schedule
+          </button>
+          <button onclick="loadTemplate('concept')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 text-xs font-medium hover:bg-slate-700 border border-slate-700 transition">
+            <i class="fa-solid fa-brain mr-1 text-purple-400"></i> Complex Reading
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Inputs Column (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Role Input -->
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-indigo-500 border-slate-800 space-y-2">
+            <label class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-user-gear"></i> 1. Role (Persona)
+            </label>
+            <input type="text" id="builder-role" oninput="updatePromptBuilder()" 
+              placeholder="e.g., Act as an encouraging community college writing tutor..."
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <!-- Task Input -->
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-emerald-500 border-slate-800 space-y-2">
+            <label class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-list-check"></i> 2. Task (Objective)
+            </label>
+            <input type="text" id="builder-task" oninput="updatePromptBuilder()" 
+              placeholder="e.g., Help me brainstorm 3 distinct thesis statement options..."
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <!-- Context Input -->
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-amber-500 border-slate-800 space-y-2">
+            <label class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-building-columns"></i> 3. Context (Background)
+            </label>
+            <textarea id="builder-context" oninput="updatePromptBuilder()" rows="2"
+              placeholder="e.g., I am writing a 3-page paper for English 101 on balancing full-time work and college..."
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+          </div>
+
+          <!-- Constraints Input -->
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-purple-500 border-slate-800 space-y-2">
+            <label class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-ban border-slate-800"></i> 4. Constraints (Boundaries)
+            </label>
+            <textarea id="builder-constraints" oninput="updatePromptBuilder()" rows="2"
+              placeholder="e.g., Do not write the essay for me. Format as a bulleted pros/cons list under 200 words..."
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-purple-500 resize-none"></textarea>
+          </div>
+
+        </div>
+
+        <!-- Output & Live Test Preview (5 cols) -->
+        <div class="lg:col-span-5 space-y-4 flex flex-col justify-between">
+          
+          <!-- Compiled Prompt Preview Box -->
+          <div class="glass-card p-5 rounded-2xl border border-slate-800 flex-1 flex flex-col space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-terminal text-indigo-400"></i> Live Engineered Prompt
+              </span>
+              <button onclick="copyEngineeredPrompt()" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-indigo-300 font-medium transition flex items-center gap-1">
+                <i class="fa-regular fa-copy"></i> Copy Prompt
+              </button>
+            </div>
+
+            <!-- Realtime Output Box -->
+            <div id="compiled-prompt-output" class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs leading-relaxed text-slate-300 flex-1 overflow-y-auto max-h-[220px]">
+              <span class="text-slate-500 italic">Fill in the fields on the left or select a template to build your RTC-C prompt in real time...</span>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="pt-2 flex gap-2">
+              <button onclick="simulateAIResponse()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-semibold text-xs sm:text-sm transition shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play"></i> Simulate Copilot Output
+              </button>
+            </div>
+          </div>
+
+          <!-- Simulated AI Response Box -->
+          <div id="simulated-ai-card" class="glass-card p-4 rounded-2xl border border-indigo-500/30 bg-slate-900/90 hidden space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-robot"></i> Copilot Simulated Output
+              </span>
+              <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-mono">RTC-C Formatted</span>
+            </div>
+            <div id="simulated-ai-content" class="text-xs text-slate-300 space-y-2 pt-1 font-sans">
+              <!-- Content inserted by JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 4: DISCIPLINE-SPECIFIC EXAMPLES -->
+    <section id="tab-examples" class="tab-content hidden space-y-6">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Side-by-Side Comparison</h2>
+        <p class="text-xs sm:text-sm text-slate-400">See how transforming a vague question into an engineered prompt impacts academic output quality.</p>
+      </div>
+
+      <!-- Example Toggle selector -->
+      <div class="flex justify-center gap-3">
+        <button onclick="switchExample('writing')" id="ex-btn-writing" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-indigo-600 text-white shadow-md">
+          Scenario A: Writing & Thesis
+        </button>
+        <button onclick="switchExample('study')" id="ex-btn-study" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-400 hover:text-white">
+          Scenario B: Study Skills & Time
+        </button>
+      </div>
+
+      <!-- Side by Side Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Weak Prompt Card -->
+        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-red-500 border-x border-b border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-circle-xmark"></i> Weak Prompt
+            </span>
+            <span class="text-xs text-slate-500 font-mono">No Structure</span>
+          </div>
+
+          <div id="weak-prompt-box" class="p-4 rounded-xl bg-slate-950 border border-red-500/20 font-mono text-xs text-slate-300">
+            "Write an essay about college stress."
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-slate-300">Expected Result / Risk:</div>
+            <p id="weak-prompt-result" class="text-xs text-slate-400 leading-relaxed p-3 rounded-lg bg-slate-900 border border-slate-800">
+              Generates a generic, canned 5-paragraph essay. Submitting this directly violates academic integrity policies, lacks personal voice, and provides no active learning value.
+            </p>
+          </div>
+        </div>
+
+        <!-- Engineered Prompt Card -->
+        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-emerald-500 border-x border-b border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-circle-check"></i> Engineered Prompt
+            </span>
+            <span class="text-xs text-emerald-400 font-mono">RTC-C Applied</span>
+          </div>
+
+          <div id="engineered-prompt-box" class="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 font-mono text-xs text-slate-200 leading-relaxed space-y-1">
+            <!-- Dynamic content inserted by JS -->
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-slate-300">Expected Result / Benefit:</div>
+            <p id="engineered-prompt-result" class="text-xs text-slate-300 leading-relaxed p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <!-- Dynamic content inserted by JS -->
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 5: 5-MINUTE CLASS ACTIVITY / CHALLENGE -->
+    <section id="tab-challenge" class="tab-content hidden space-y-6">
+      
+      <div class="glass-card p-6 rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950/40 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
+            <i class="fa-solid fa-stopwatch"></i> Interactive 5-Minute Student Activity
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Total Points: <span id="challenge-score" class="text-emerald-400 font-bold">0</span>/100</span>
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Prompt Makeover Challenge</h2>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <strong>Scenario:</strong> You are struggling to understand a core First-Year Experience concept: <span class="text-indigo-400 font-semibold font-mono">Growth Mindset vs. Fixed Mindset</span>. Convert the vague prompt below into a high-powered RTC-C prompt!
+        </p>
+
+        <!-- Initial Weak Prompt Banner -->
+        <div class="p-3 rounded-xl bg-slate-950 border border-red-500/30 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-xs font-mono text-red-300">
+            <i class="fa-solid fa-triangle-exclamation"></i> Weak Starter Prompt: "Explain growth mindset."
+          </div>
+          <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded font-sans">Needs Makeover</span>
+        </div>
+      </div>
+
+      <!-- Challenge Interactive Form -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- R -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Role (Who should AI be?)</span>
+              <span id="badge-r" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Incomplete</span>
+            </label>
+            <input type="text" id="ch-role" onkeyup="checkChallengeProgress()" placeholder="e.g., Act as a friendly peer study partner in FYE..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <!-- T -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Task (Action verb)</span>
+              <span id="badge-t" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Incomplete</span>
+            </label>
+            <input type="text" id="ch-task" onkeyup="checkChallengeProgress()" placeholder="e.g., Explain the difference between growth & fixed mindset..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <!-- Context -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Context (Your situation)</span>
+              <span id="badge-c1" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Incomplete</span>
+            </label>
+            <input type="text" id="ch-context" onkeyup="checkChallengeProgress()" placeholder="e.g., I am preparing for an FYE group discussion tomorrow..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <!-- Constraints -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Constraints (Limits & Rules)</span>
+              <span id="badge-c2" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Incomplete</span>
+            </label>
+            <input type="text" id="ch-constraints" onkeyup="checkChallengeProgress()" placeholder="e.g., Under 150 words, use bullet points & 2 discussion questions..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
+          </div>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+          <button onclick="revealChallengeSolution()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition border border-slate-700">
+            <i class="fa-solid fa-key text-amber-400 mr-1.5"></i> Reveal Solution Key
+          </button>
+          
+          <button onclick="submitChallenge()" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-extrabold transition shadow-lg shadow-emerald-500/20">
+            Submit & Test Prompt <i class="fa-solid fa-check mr-1"></i>
+          </button>
+        </div>
+
+        <!-- Feedback Results Box -->
+        <div id="challenge-feedback" class="hidden p-4 rounded-xl bg-slate-900 border border-emerald-500/40 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-emerald-400">
+            <i class="fa-solid fa-award"></i> Feedback & Score Analysis:
+          </div>
+          <div id="challenge-feedback-text" class="text-xs text-slate-300 leading-relaxed"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 6: CRITICAL LITERACY & ETHICS -->
+    <section id="tab-ethics" class="tab-content hidden space-y-6">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Critical AI Literacy & Ethics Checklist</h2>
+        <p class="text-xs sm:text-sm text-slate-400">AI tools are pattern recognizers—not truth engines. Use this audit before submitting academic work.</p>
+      </div>
+
+      <!-- Ethics Checklist Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Checklist Interactive Box -->
+        <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-indigo-400"></i> The Student Pre-Submission Audit
+          </h3>
+
+          <div class="space-y-3">
+            
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+              <input type="checkbox" class="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+              <div class="text-xs">
+                <span class="font-bold text-slate-200">1. Hallucination Check</span>
+                <p class="text-slate-400">Did I manually verify all dates, statistics, quotes, and cited sources against textbook or library databases?</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+              <input type="checkbox" class="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+              <div class="text-xs">
+                <span class="font-bold text-slate-200">2. Citation Audit</span>
+                <p class="text-slate-400">If the AI cited a URL or journal paper, did I click it to ensure it actually exists?</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+              <input type="checkbox" class="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+              <div class="text-xs">
+                <span class="font-bold text-slate-200">3. Bias & Perspective Evaluation</span>
+                <p class="text-slate-400">Does the response reflect one-sided cultural assumptions? Did I prompt for missing viewpoints?</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+              <input type="checkbox" class="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+              <div class="text-xs">
+                <span class="font-bold text-slate-200">4. Syllabus Compliance</span>
+                <p class="text-slate-400">Is generative AI permitted by my specific instructor for this exact assignment task?</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+              <input type="checkbox" class="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+              <div class="text-xs">
+                <span class="font-bold text-slate-200">5. Intellectual Voice Ownership</span>
+                <p class="text-slate-400">Is the final analysis in my own words, expressing my own original arguments?</p>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Practical Strategies Box -->
+        <div class="space-y-4">
+          
+          <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bug text-red-400"></i> Spotting Hallucinations
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              AI models predict words based on statistical probability, not actual comprehension. They often fabricate authentic-sounding paper titles or citations. 
+              <strong class="text-slate-100">Rule of thumb:</strong> Never paste a quote or statistic into your homework without checking your college library database.
+            </p>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-scale-balanced text-amber-400"></i> Detecting Algorithmic Bias
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Training data reflects historical internet biases. Follow up with counter-prompts like:
+              <span class="block my-1.5 p-2 rounded bg-slate-950 font-mono text-[11px] text-amber-300 border border-slate-800">
+                "What alternative cultural perspectives or critical viewpoints are missing from this analysis?"
+              </span>
+            </p>
+          </div>
+
+          <!-- Citation Disclosure Card -->
+          <div class="glass-card p-5 rounded-2xl border border-indigo-500/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                <i class="fa-solid fa-file-pen"></i> Syllabus Disclosure Statement
+              </h4>
+              <button onclick="openCitationModal()" class="text-xs text-indigo-400 hover:underline">Generator Tool &rarr;</button>
+            </div>
+            <p class="text-xs text-slate-400">Include a brief statement at the end of your assignment when using AI for brainstorming:</p>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 italic">
+              "Acknowledgement: I utilized Microsoft Copilot to assist in brainstorming thesis options and organizing my essay outline. All final drafting represents my original work."
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL: CITATION GENERATOR -->
+  <div id="citation-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-lg p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-quote-right text-indigo-400"></i> AI Citation Generator
+        </h3>
+        <button onclick="closeCitationModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">AI Platform Used</label>
+          <select id="cite-platform" onchange="generateCitations()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200">
+            <option value="ChatGPT">ChatGPT (OpenAI)</option>
+            <option value="Copilot">Microsoft Copilot</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">Prompt Text Submitted</label>
+          <input type="text" id="cite-prompt" oninput="generateCitations()" value="Help me brainstorm thesis options for climate change paper" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200">
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">Date Used</label>
+          <input type="text" id="cite-date" oninput="generateCitations()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200">
+        </div>
+      </div>
+
+      <!-- Generated Citation Boxes -->
+      <div class="space-y-3 pt-2">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-indigo-400">MLA 9th Edition Format</span>
+            <button onclick="copyToClipboard('cite-mla')" class="text-[11px] text-slate-400 hover:text-white"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+          <div id="cite-mla" class="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-300"></div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-emerald-400">APA 7th Edition Format</span>
+            <button onclick="copyToClipboard('cite-apa')" class="text-[11px] text-slate-400 hover:text-white"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+          <div id="cite-apa" class="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-300"></div>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="closeCitationModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">
+          Close Tool
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-xl transition-all duration-300 opacity-0 transform translate-y-4 pointer-events-none flex items-center gap-2">
+    <i class="fa-solid fa-circle-check"></i> <span id="toast-message">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+        btn.classList.add('text-slate-400');
+      });
+      document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('bg-slate-800', 'text-slate-300');
+      });
+
+      const selectedTab = document.getElementById('tab-' + tabId);
+      if (selectedTab) selectedTab.classList.remove('hidden');
+
+      const selectedNav = document.getElementById('nav-' + tabId);
+      if (selectedNav) {
+        selectedNav.classList.add('bg-indigo-600', 'text-white', 'shadow');
+        selectedNav.classList.remove('text-slate-400');
+      }
+
+      const selectedMobNav = document.getElementById('mob-nav-' + tabId);
+      if (selectedMobNav) {
+        selectedMobNav.classList.add('bg-indigo-600', 'text-white');
+        selectedMobNav.classList.remove('bg-slate-800', 'text-slate-300');
+      }
+    }
+
+    // Templates for Prompt Studio
+    const templates = {
+      writing: {
+        role: "Act as an encouraging community college writing tutor.",
+        task: "Help me brainstorm 3 distinct thesis statement options and key arguments.",
+        context: "I am writing a 3-page persuasive essay for English 101 on balancing full-time work and college.",
+        constraints: "Do not write the essay for me. Format as a bulleted pros/cons list under 150 words."
+      },
+      schedule: {
+        role: "Act as a college student success coach specializing in study routines.",
+        task: "Create a realistic weekly study schedule and active recall strategy plan.",
+        context: "I am enrolled in Intro to Psychology and Math, working 25 hrs/week in retail with 2 hours study time each evening.",
+        constraints: "Format as a daily table in 30-min intervals. Include 10-min breaks. No study sessions past 10 PM."
+      },
+      concept: {
+        role: "Act as a friendly peer study partner in an FYE seminar.",
+        task: "Explain the difference between 'Growth Mindset' and 'Fixed Mindset' using a real-world math anxiety analogy.",
+        context: "I am preparing for a group discussion in my seminar tomorrow and need to explain it clearly.",
+        constraints: "Keep under 150 words, use bullet points for key traits, and end with 2 discussion questions."
+      }
+    };
+
+    function loadTemplate(key) {
+      const data = templates[key];
+      if (!data) return;
+      document.getElementById('builder-role').value = data.role;
+      document.getElementById('builder-task').value = data.task;
+      document.getElementById('builder-context').value = data.context;
+      document.getElementById('builder-constraints').value = data.constraints;
+      updatePromptBuilder();
+      showToast("Loaded " + key + " template!");
+    }
+
+    function updatePromptBuilder() {
+      const role = document.getElementById('builder-role').value.trim();
+      const task = document.getElementById('builder-task').value.trim();
+      const context = document.getElementById('builder-context').value.trim();
+      const constraints = document.getElementById('builder-constraints').value.trim();
+
+      const outputBox = document.getElementById('compiled-prompt-output');
+
+      if (!role && !task && !context && !constraints) {
+        outputBox.innerHTML = `<span class="text-slate-500 italic">Fill in the fields on the left or select a template to build your RTC-C prompt in real time...</span>`;
+        return;
+      }
+
+      let compiled = '';
+      if (role) compiled += `<span class="text-indigo-400 font-bold">[Role]</span> ${role}<br><br>`;
+      if (task) compiled += `<span class="text-emerald-400 font-bold">[Task]</span> ${task}<br><br>`;
+      if (context) compiled += `<span class="text-amber-400 font-bold">[Context]</span> ${context}<br><br>`;
+      if (constraints) compiled += `<span class="text-purple-400 font-bold">[Constraints]</span> ${constraints}`;
+
+      outputBox.innerHTML = compiled;
+    }
+
+    function copyEngineeredPrompt() {
+      const outputBox = document.getElementById('compiled-prompt-output');
+      const textToCopy = outputBox.innerText;
+      if (!textToCopy || textToCopy.includes("Fill in the fields")) {
+        showToast("Build a prompt first!");
+        return;
+      }
+      copyTextToClipboard(textToCopy);
+      showToast("Prompt copied to clipboard!");
+    }
+
+    function simulateAIResponse() {
+      const card = document.getElementById('simulated-ai-card');
+      const content = document.getElementById('simulated-ai-content');
+      card.classList.remove('hidden');
+
+      content.innerHTML = `
+        <div class="flex items-center gap-2 text-indigo-400">
+          <i class="fa-solid fa-spinner animate-spin"></i> Copilot is evaluating your RTC-C prompt...
+        </div>
+      `;
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <p class="font-semibold text-slate-100">Here are 3 distinct thesis statement options for your essay:</p>
+          <ul class="list-disc pl-4 space-y-1 text-slate-300">
+            <li><strong>Option 1 (Focus on Flexibility):</strong> "Community colleges should expand asynchronous courses to support working adult students."</li>
+            <li><strong>Option 2 (Focus on Mental Health):</strong> "Balancing full-time employment with college coursework increases stress unless time management frameworks are implemented."</li>
+            <li><strong>Option 3 (Focus on Employer Incentives):</strong> "Local employers and colleges must collaborate on flexible scheduling to improve student graduation rates."</li>
+          </ul>
+          <p class="text-slate-400 text-[11px] mt-2 border-t border-slate-800 pt-1">
+            <i class="fa-solid fa-check text-emerald-400"></i> Followed Constraint: Provided options without writing the draft essay for you.
+          </p>
+        `;
+      }, 1000);
+    }
+
+    // Side-by-Side Example Switcher
+    const sideExamples = {
+      writing: {
+        weak: "Write an essay about college stress.",
+        engineered: `<span class="text-indigo-400 font-bold">[Role]</span> Act as an encouraging writing tutor.<br><span class="text-emerald-400 font-bold">[Task]</span> Help me brainstorm 3 thesis statements.<br><span class="text-amber-400 font-bold">[Context]</span> 3-page essay for English 101 on working full-time in college.<br><span class="text-purple-400 font-bold">[Constraints]</span> Do not write essay. Bullet list of pros/cons under 150 words.`,
+        weakResult: "Generates a canned 5-paragraph draft essay. Submitting this directly risks academic integrity penalties and fails to build critical thinking.",
+        engineeredResult: "Provides 3 structured options with pros & cons. Enables you to choose your perspective and write your original paper confidently."
+      },
+      study: {
+        weak: "How do I manage my time in college?",
+        engineered: `<span class="text-indigo-400 font-bold">[Role]</span> Act as a student success coach for busy adults.<br><span class="text-emerald-400 font-bold">[Task]</span> Create a weekly study schedule & active recall plan.<br><span class="text-amber-400 font-bold">[Context]</span> Taking Psychology & Math, working 25 hrs/week in retail.<br><span class="text-purple-400 font-bold">[Constraints]</span> Weekly markdown table, 30-min blocks, 10-min breaks, no study after 10 PM.`,
+        weakResult: "Gives generic advice like 'buy a calendar' or 'don't procrastinate' that doesn't fit your daily job schedule.",
+        engineeredResult: "Produces an hour-by-hour weekly study grid tailored around your real work shifts and class load."
+      }
+    };
+
+    function switchExample(key) {
+      const data = sideExamples[key];
+      if (!data) return;
+
+      document.getElementById('weak-prompt-box').innerText = `"${data.weak}"`;
+      document.getElementById('engineered-prompt-box').innerHTML = data.engineered;
+      document.getElementById('weak-prompt-result').innerText = data.weakResult;
+      document.getElementById('engineered-prompt-result').innerText = data.engineeredResult;
+
+      const btnW = document.getElementById('ex-btn-writing');
+      const btnS = document.getElementById('ex-btn-study');
+
+      if (key === 'writing') {
+        btnW.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-indigo-600 text-white shadow-md";
+        btnS.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-400 hover:text-white";
+      } else {
+        btnS.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-indigo-600 text-white shadow-md";
+        btnW.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-400 hover:text-white";
+      }
+    }
+
+    // Interactive Challenge Logic
+    function checkChallengeProgress() {
+      const r = document.getElementById('ch-role').value.trim();
+      const t = document.getElementById('ch-task').value.trim();
+      const c1 = document.getElementById('ch-context').value.trim();
+      const c2 = document.getElementById('ch-constraints').value.trim();
+
+      updateBadge('badge-r', r.length > 5);
+      updateBadge('badge-t', t.length > 5);
+      updateBadge('badge-c1', c1.length > 5);
+      updateBadge('badge-c2', c2.length > 5);
+
+      let score = 0;
+      if (r.length > 5) score += 25;
+      if (t.length > 5) score += 25;
+      if (c1.length > 5) score += 25;
+      if (c2.length > 5) score += 25;
+
+      document.getElementById('challenge-score').innerText = score;
+    }
+
+    function updateBadge(id, isDone) {
+      const badge = document.getElementById(id);
+      if (isDone) {
+        badge.innerText = "Complete";
+        badge.className = "text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold";
+      } else {
+        badge.innerText = "Incomplete";
+        badge.className = "text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500";
+      }
+    }
+
+    function submitChallenge() {
+      const score = parseInt(document.getElementById('challenge-score').innerText);
+      const feedbackBox = document.getElementById('challenge-feedback');
+      const feedbackText = document.getElementById('challenge-feedback-text');
+      
+      feedbackBox.classList.remove('hidden');
+
+      if (score === 100) {
+        feedbackText.innerHTML = `
+          <p class="font-bold text-emerald-400">Outstanding Work! 100/100</p>
+          <p>Your engineered prompt includes all 4 components of the RTC-C framework. Testing this in ChatGPT or Copilot will generate a focused, tailored explanation with study questions!</p>
+        `;
+        showToast("Challenge Completed Successfully! 100 Points");
+      } else {
+        feedbackText.innerHTML = `
+          <p class="font-bold text-amber-400">Good Effort! Score: ${score}/100</p>
+          <p>Try completing all four fields (Role, Task, Context, Constraints) to hit maximum prompt precision.</p>
+        `;
+      }
+    }
+
+    function revealChallengeSolution() {
+      document.getElementById('ch-role').value = "Act as a friendly peer study partner in a First-Year Experience course.";
+      document.getElementById('ch-task').value = "Explain the difference between Growth Mindset and Fixed Mindset using a math anxiety analogy.";
+      document.getElementById('ch-context').value = "I am preparing for an FYE group discussion tomorrow and need to explain it clearly.";
+      document.getElementById('ch-constraints').value = "Limit to under 150 words, use bullet points, and end with 2 discussion questions.";
+      checkChallengeProgress();
+      showToast("Solution loaded into challenge form!");
+    }
+
+    // Citation Modal & Generator
+    function openCitationModal() {
+      document.getElementById('citation-modal').classList.remove('hidden');
+      const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+      document.getElementById('cite-date').value = today;
+      generateCitations();
+    }
+
+    function closeCitationModal() {
+      document.getElementById('citation-modal').classList.add('hidden');
+    }
+
+    function generateCitations() {
+      const platform = document.getElementById('cite-platform').value;
+      const promptText = document.getElementById('cite-prompt').value || "Prompt topic";
+      const dateStr = document.getElementById('cite-date').value || "11 Aug. 2026";
+
+      const mlaBox = document.getElementById('cite-mla');
+      const apaBox = document.getElementById('cite-apa');
+
+      if (platform === "ChatGPT") {
+        mlaBox.innerText = `"${promptText}" prompt. ChatGPT, 11 Aug. 2026 version, OpenAI, ${dateStr}, chatgpt.com.`;
+        apaBox.innerText = `OpenAI. (2026). ChatGPT (Aug 11 version) [Large language model]. https://chatgpt.com`;
+      } else {
+        mlaBox.innerText = `"${promptText}" prompt. Microsoft Copilot, ${dateStr}, Microsoft, copilot.microsoft.com.`;
+        apaBox.innerText = `Microsoft. (2026). Copilot [Large language model]. https://copilot.microsoft.com`;
+      }
+    }
+
+    // Clipboard Copy Utility
+    function copyTextToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Copy failed', err);
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+
+    function copyToClipboard(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      copyTextToClipboard(text);
+      showToast("Citation copied!");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = message;
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 2500);
+    }
+
+    // Initialize Page Default State
+    window.onload = function() {
+      switchExample('writing');
+      generateCitations();
+    };
+  </script>
+</body>
+</html>
